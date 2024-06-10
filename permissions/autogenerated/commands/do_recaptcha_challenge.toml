@@ -1,0 +1,13 @@
+# Automatically generated - DO NOT EDIT!
+
+"$schema" = "../../schemas/schema.json"
+
+[[permission]]
+identifier = "allow-do-recaptcha-challenge"
+description = "Enables the do_recaptcha_challenge command without any pre-configured scope."
+commands.allow = ["do_recaptcha_challenge"]
+
+[[permission]]
+identifier = "deny-do-recaptcha-challenge"
+description = "Denies the do_recaptcha_challenge command without any pre-configured scope."
+commands.deny = ["do_recaptcha_challenge"]
