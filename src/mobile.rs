@@ -3,6 +3,7 @@ use tauri::{
   plugin::{PluginApi, PluginHandle},
   AppHandle, Runtime,
 };
+use tauri::plugin::mobile::PluginInvokeError;
 
 use crate::models::*;
 
@@ -16,7 +17,7 @@ tauri::ios_plugin_binding!(init_plugin_recaptcha);
 pub fn init<R: Runtime, C: DeserializeOwned>(
   _app: &AppHandle<R>,
   api: PluginApi<R, C>,
-) -> crate::Result<Recaptcha<R>> {
+) -> Result<Recaptcha<R>, PluginInvokeError> {
   #[cfg(target_os = "android")]
   let handle = api.register_android_plugin(PLUGIN_IDENTIFIER, "RecaptchaPlugin")?;
   #[cfg(target_os = "ios")]
@@ -28,10 +29,9 @@ pub fn init<R: Runtime, C: DeserializeOwned>(
 pub struct Recaptcha<R: Runtime>(PluginHandle<R>);
 
 impl<R: Runtime> Recaptcha<R> {
-  pub fn do_recaptcha_challenge(&self, payload: DoRecaptchaChallengeRequest) -> crate::Result<DoRecaptchaChallengeResponse> {
+  pub fn do_recaptcha_challenge(&self, payload: DoRecaptchaChallengeRequest) -> Result<DoRecaptchaChallengeResponse, PluginInvokeError> {
     self
       .0
       .run_mobile_plugin("doRecaptchaChallenge", payload)
-      .map_err(Into::into)
   }
 }

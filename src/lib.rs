@@ -9,10 +9,7 @@ pub use models::*;
 
 mod mobile;
 
-mod error;
 mod models;
-
-pub use error::{Error, Result};
 
 use mobile::Recaptcha;
 
@@ -21,7 +18,7 @@ pub trait RecaptchaExt<R: Runtime> {
   fn recaptcha(&self) -> &Recaptcha<R>;
 }
 
-impl<R: Runtime, T: Manager<R>> crate::RecaptchaExt<R> for T {
+impl<R: Runtime, T: Manager<R>> RecaptchaExt<R> for T {
   fn recaptcha(&self) -> &Recaptcha<R> {
     self.state::<Recaptcha<R>>().inner()
   }
