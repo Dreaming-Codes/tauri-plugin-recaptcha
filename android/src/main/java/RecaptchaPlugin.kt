@@ -2,6 +2,7 @@ package com.plugin.recaptcha
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.graphics.Color
 import android.view.ViewGroup
 import android.webkit.JavascriptInterface
 import android.webkit.WebView
@@ -26,11 +27,9 @@ class RecaptchaPlugin(private val activity: Activity): Plugin(activity) {
         val args = invoke.parseArgs(DoRecaptchaChallengeArgs::class.java)
 
         val recaptchaWebview = WebView(activity);
+        recaptchaWebview.setBackgroundColor(Color.TRANSPARENT)
         val layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
         activity.addContentView(recaptchaWebview, layoutParams);
-
-        recaptchaWebview.settings.javaScriptEnabled = true
-        recaptchaWebview.loadDataWithBaseURL(args.baseURL, args.html, "text/html", "UTF-8", null);
 
         class RecaptchaWebviewInterface {
             @JavascriptInterface
@@ -38,9 +37,15 @@ class RecaptchaPlugin(private val activity: Activity): Plugin(activity) {
                 val ret = JSObject()
                 ret.put("token", token)
                 invoke.resolve(ret)
+                activity.runOnUiThread {
+                    recaptchaWebview.destroy()
+                }
             }
         }
 
         recaptchaWebview.addJavascriptInterface(RecaptchaWebviewInterface(), "RecaptchaWebviewInterface");
+
+        recaptchaWebview.settings.javaScriptEnabled = true
+        recaptchaWebview.loadDataWithBaseURL(args.baseURL, args.html, "text/html", "UTF-8", null);
     }
 }
